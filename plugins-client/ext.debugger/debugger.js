@@ -17,7 +17,6 @@ var commands = require("ext/commands/commands");
 var fs = require("ext/filesystem/filesystem");
 var noderunner = require("ext/noderunner/noderunner");
 var markup = require("text!ext/debugger/debugger.xml");
-var settings = require("ext/settings/settings");
 
 require("ext/debugger/inspector");
 
@@ -36,7 +35,7 @@ module.exports = ext.register("ext/debugger/debugger", {
 
     hook : function(){
         var _self = this;
-        
+
         commands.addCommand({
             name: "resume",
             hint: "resume the current paused process",
@@ -430,7 +429,7 @@ module.exports = ext.register("ext/debugger/debugger", {
     destroy : function(){
         commands.removeCommandsByName(
             ["resume", "stepinto", "stepover", "stepout"]);
-        
+
         this.nodes.each(function(item){
             item.destroy(true, true);
             dock.unregisterPage(item);
