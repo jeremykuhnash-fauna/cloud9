@@ -40,12 +40,12 @@ var config = {
             },
             "./cloud9.alive",
             "./cloud9.debug",
- 
+
             // Client libraries
-            "./../plugins-client/cloud9.core", 
-            "./../plugins-client/lib.ace", 
-            "./../plugins-client/lib.apf", 
-            "./../plugins-client/lib.treehugger", 
+            "./../plugins-client/cloud9.core",
+            "./../plugins-client/lib.ace",
+            "./../plugins-client/lib.apf",
+            "./../plugins-client/lib.treehugger",
             "./../plugins-client/lib.v8debug",
             "./../plugins-client/lib.requirejs",
             "./../plugins-client/lib.packed",
@@ -134,19 +134,19 @@ var config = {
                     //"ext/acebugs/acebugs"
                 ]
             }, {
-                packagePath: "vfs-architect/child",
-                uid: 501,
-                gid: 20,
+                packagePath: "vfs-architect/local",
                 umask: 0750,
                 root: projectDir + "/",
-                skipSearchCheck: false,
-                httpRoot: "http://localhost:" + port + vfsUrl
+                httpRoot: "http://localhost:" + port + vfsUrl,
 
-//                packagePath: "vfs-architect/ssh",
-//                host: "localhost",
-//                nodePath: process.execPath,
-//                root: projectDir + "/",
-//                httpRoot: "http://localhost:" + port + vfsUrl
+//                uid: 501,
+//                gid: 20,
+
+                packagePath: "vfs-architect/ssh",
+                host: "fjakobs@localhost",
+                nodePath: process.execPath,
+                root: projectDir + "/",
+                httpRoot: "http://localhost:" + port + vfsUrl
             }, {
                 packagePath: "vfs-architect/http-adapter",
                 mount: vfsUrl
