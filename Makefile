@@ -62,7 +62,6 @@ plugins-client/lib.ace/www/worker/worker.js : $(wildcard plugins-client/ext.lang
 	ln -s `pwd`/plugins-client/ext.language /tmp/c9_worker_build/ext/language
 	ln -s `pwd`/plugins-client/ext.codecomplete /tmp/c9_worker_build/ext/codecomplete
 	ln -s `pwd`/plugins-client/ext.jslanguage /tmp/c9_worker_build/ext/jslanguage
-	ln -s `pwd`/plugins-client/ext.jsinfer /tmp/c9_worker_build/ext/jsinfer
 	./Makefile.dryice.js worker
 	cp node_modules/ace/build/src/worker* plugins-client/lib.ace/www/worker
 
@@ -76,18 +75,6 @@ theme:
 	mkdir -p plugins-client/lib.ace/www/theme
 	cp `find node_modules/ace/build/src | grep -E "theme-[a-zA-Z_0-9]+.js"` plugins-client/lib.ace/www/theme
 
-min_ace: 
-	for i in `ls ./node_modules/ace/build/src/worker*.js`; do \
-		node build/r.js -o name=$$i out=./plugins-client/lib.ace/www/worker/`echo $$i | sed 's/.*\///'` baseUrl=. ; \
-	done
-	# throws errors at the moment
-	#for i in `find node_modules/ace/build/src | grep -E "mode-[a-zA-Z_]+.js"`; do \
-	#	node build/r.js -o name=$$i out=./plugins-client/lib.ace/www/mode/`echo $$i | sed 's/.*\///'` baseUrl=. ; \
-	#done
-	#for i in `find node_modules/ace/build/src | grep -E "theme-[a-zA-Z_]+.js"`; do \
-	#	node build/r.js -o name=$$i out=./plugins-client/lib.ace/www/theme/`echo $$i | sed 's/.*\///'` baseUrl=. ; \
-	#done
-
 gzip_safe:
 	for i in `ls ./plugins-client/lib.packed/www/*.js`; do \
 		gzip -9 -v -c -q -f $$i > $$i.gz ; \
@@ -100,7 +87,7 @@ gzip:
 
 c9core: apf ace core worker mode theme
     
-package: helper c9core ext min_ace
+package: helper c9core ext
 
 test:
 	$(MAKE) -C test

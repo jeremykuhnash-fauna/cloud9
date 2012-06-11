@@ -133,8 +133,7 @@ var config = {
                     //"ext/githistory/githistory",
                     "ext/revisions/revisions",
                     "ext/language/liveinspect",
-                    "ext/quicksearch/quicksearch",
-                    "ext/jsinfer/jsinfer"
+                    "ext/quicksearch/quicksearch"
                     //"ext/splitview/splitview"
                     //"ext/minimap/minimap"
                     //"ext/acebugs/acebugs"

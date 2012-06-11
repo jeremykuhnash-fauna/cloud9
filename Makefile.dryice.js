@@ -58,9 +58,6 @@ function worker(project) {
                     'ext/jslanguage/parse',
                     'ext/jslanguage/scope_analyzer',
                     'ext/jslanguage/narcissus_jshint',
-                    'ext/jslanguage/narcissus_jshint',
-                    'ext/jslanguage/debugger',
-                    'ext/jsinfer/infer_completer'
                 ]
             })
         ],
