@@ -227,10 +227,9 @@ module.exports = {
         }, 0);
     },
 
-    closeCompletionBox : function(event, doNotHide) {
+    closeCompletionBox : function(event) {
+        barCompleterCont.$ext.style.display = "none";
         var ace = editors.currentEditor.amlEditor.$editor;
-        if (!doNotHide)
-            barCompleterCont.$ext.style.display = "none";
         document.removeEventListener("click", this.closeCompletionBox);
         ace.container.removeEventListener("DOMMouseScroll", this.closeCompletionBox);
         ace.container.removeEventListener("mousewheel", this.closeCompletionBox);
