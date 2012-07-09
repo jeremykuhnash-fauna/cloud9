@@ -606,7 +606,7 @@ var isCallbackCall = function(node) {
         if (b.p.value === "forEach" || b.p.value === "map")
             result = true;
     });
-    return result || outline.tryExtractEventHandler(node);
+    return result || outline.tryExtractEventHandler(node, true);
 }
 
 handler.onCursorMovedNode = function(doc, fullAst, cursorPos, currentNode, callback) {
