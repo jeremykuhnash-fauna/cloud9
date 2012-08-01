@@ -364,6 +364,8 @@ Scope.prototype.getNamesByKind = function(kind) {
 var SCOPE_ARRAY = Object.keys(GLOBALS).concat(KEYWORDS);
 
 handler.complete = function(doc, fullAst, data, currentNode, callback) {
+    return handler.simpleComplete(doc, fullAst, data, currentNode, callback);
+    /*
     var pos = data.pos;
     var line = doc.getLine(pos.row);
     var identifier = completeUtil.retrievePreceedingIdentifier(line, pos.column);
@@ -378,11 +380,75 @@ handler.complete = function(doc, fullAst, data, currentNode, callback) {
           priority    : 0
         };
     }));
+    */
+};
+
+handler.completionRequiresParsing = function() { return true; }
+
+handler.simpleComplete = function(doc, fullAst, data, currentNode, callback) {
+    var pos = data.pos;
+    var line = doc.getLine(pos.row);
+    var identifier = completeUtil.retrievePreceedingIdentifier(line, pos.column);
+    
+    this.simpleScopeAnalyzer([], fullAst);
+    
+    var scope = [];
+    var results = [];
+    fullAst.traverseTopDown(
+        '_', function() {
+            if (this.getAnnotation("simpleScope"))
+                scope = this.getAnnotation("simpleScope");
+        },
+        '_', function() {
+            if (this === currentNode)
+                results = completeUtil.findCompletions(identifier, scope);
+        }
+    );
+    
+    callback(results.map(function(m) {
+        return {
+          name        : m,
+          replaceText : m,
+          icon        : null,
+          meta        : "EcmaScript",
+          priority    : 0
+        };
+    }));
+};
+
+// TODO: remove
+handler.simpleAnalyze = function(doc, ast, callback) {
+    // this.simpleScopeAnalyzer([], ast);
+};
+
+handler.simpleScopeAnalyzer = function(scope, node) {
+    var _self = this;
+    node.setAnnotation("simpleScope", scope);
+    node.traverseTopDown(
+        'Function(x, _, body)', function(b) {
+            scope.push(b.x.value);
+            return node;
+        }
+    );
+    node.traverseTopDown(
+        'VarDecl(x)', function(b) {
+            scope.push(b.x.value);
+        },
+        'VarDecl(x, _)', function(b) {
+            scope.push(b.x.value);
+        },
+        'Function(_, _, body)', function(b) {
+            var newScope = scope.concat("this");
+            _self.simpleScopeAnalyzer(newScope, b.body, null);
+            return node;
+        }
+    );
 };
 
 handler.analyze = function(doc, ast, callback) {
     var handler = this;
     var markers = [];
+    handler.simpleAnalyze(doc, ast, callback);
     
     // Preclare variables (pre-declares, yo!)
     function preDeclareHoisted(scope, node) {
@@ -417,12 +483,13 @@ handler.analyze = function(doc, ast, callback) {
             node.traverseTopDown(
                 'VarDecl(x)', function(b) {
                     mustUseVars.push(scope.get(b.x.value));
-                },
+                    
+                }, 
                 'VarDeclInit(x, e)', function(b) {
                     // Allow unused function declarations
-                    while (b.e.rewrite('Assign(_, _)'))
+                    while (b.e.isMatch('Assign(_, _)'))
                         b.e = b.e[1];
-                    if (!b.e.rewrite('Function(_, _, _)'))
+                    if (!b.e.isMatch('Function(_, _, _)'))
                         mustUseVars.push(scope.get(b.x.value));
                 },
                 'Assign(Var(x), e)', function(b, node) {
