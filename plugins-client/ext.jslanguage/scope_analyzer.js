@@ -421,8 +421,7 @@ handler.simpleAnalyze = function(doc, ast, callback) {
     // this.simpleScopeAnalyzer([], ast);
 };
 
-handler.simpleScopeAnalyzer = function(scope, node) {
-    var _self = this;
+function simpleScopeAnalyzer(scope, node) {
     node.setAnnotation("simpleScope", scope);
     node.traverseTopDown(
         'Function(x, _, body)', function(b) {
@@ -434,13 +433,13 @@ handler.simpleScopeAnalyzer = function(scope, node) {
         'VarDecl(x)', function(b) {
             scope.push(b.x.value);
         },
-        'VarDecl(x, _)', function(b) {
+        'VarDeclInit(x, _)', function(b) {
             scope.push(b.x.value);
         },
         'Function(_, _, body)', function(b) {
             var newScope = scope.concat("this");
-            _self.simpleScopeAnalyzer(newScope, b.body, null);
-            return node;
+            simpleScopeAnalyzer(newScope, b.body);
+            return this;
         }
     );
 };
