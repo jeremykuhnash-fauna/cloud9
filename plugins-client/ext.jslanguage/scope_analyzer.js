@@ -385,12 +385,15 @@ handler.complete = function(doc, fullAst, data, currentNode, callback) {
 
 handler.completionRequiresParsing = function() { return true; }
 
-handler.simpleComplete = function(doc, fullAst, data, currentNode, callback) {
+handler.complete = function(doc, fullAst, data, currentNode, callback) {
     var pos = data.pos;
     var line = doc.getLine(pos.row);
-    var identifier = completeUtil.retrievePreceedingIdentifier(line, pos.column);
-    
-    this.simpleScopeAnalyzer([], fullAst);
+    var name = completeUtil.retrievePreceedingIdentifier(line, pos.column);
+    callback(handler.simpleComplete(fullAst, currentNode, name));
+};
+
+handler.simpleComplete = function(fullAst, currentNode, name) {
+    simpleScopeAnalyzer([], fullAst);
     
     var scope = [];
     var results = [];
@@ -401,19 +404,13 @@ handler.simpleComplete = function(doc, fullAst, data, currentNode, callback) {
         },
         '_', function() {
             if (this === currentNode)
-                results = completeUtil.findCompletions(identifier, scope);
+                results = completeUtil.findCompletions(name, scope);
         }
     );
     
-    callback(results.map(function(m) {
-        return {
-          name        : m,
-          replaceText : m,
-          icon        : null,
-          meta        : "EcmaScript",
-          priority    : 0
-        };
-    }));
+    return results.map(function(m) {
+        return { name : m, replaceText : m, doc: null };
+    });
 };
 
 // TODO: remove
