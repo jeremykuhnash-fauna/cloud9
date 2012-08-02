@@ -389,10 +389,11 @@ handler.complete = function(doc, fullAst, data, currentNode, callback) {
     var pos = data.pos;
     var line = doc.getLine(pos.row);
     var name = completeUtil.retrievePreceedingIdentifier(line, pos.column);
-    callback(handler.simpleComplete(fullAst, currentNode, name));
+    var results = handler.simpleComplete(fullAst, currentNode);
+    callback(completeUtil.findCompletions(name, results));
 };
 
-handler.simpleComplete = function(fullAst, currentNode, name) {
+handler.simpleComplete = function(fullAst, currentNode) {
     simpleScopeAnalyzer([], fullAst);
     
     var scope = [];
@@ -404,7 +405,7 @@ handler.simpleComplete = function(fullAst, currentNode, name) {
         },
         '_', function() {
             if (this === currentNode)
-                results = completeUtil.findCompletions(name, scope);
+                results = scope;
         }
     );
     
