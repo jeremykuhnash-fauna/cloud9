@@ -386,6 +386,7 @@ handler.complete = function(doc, fullAst, data, currentNode, callback) {
 handler.completionRequiresParsing = function() { return true; }
 
 handler.complete = function(doc, fullAst, data, currentNode, callback) {
+    var completeUtil = require("ext/codecomplete/complete_util");
     var pos = data.pos;
     var line = doc.getLine(pos.row);
     var name = completeUtil.retrievePreceedingIdentifier(line, pos.column);
